@@ -69,7 +69,7 @@ while game_is_running:
     # debug(player1.rect.bottom,10,30)
     # debug(pygame.mouse.get_pos(),10,50)
 
-    player1interim.copy(player1)S
+    player1interim.copy(player1)
 
 
     # player2interim = network.send(player1interim)
