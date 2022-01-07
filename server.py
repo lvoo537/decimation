@@ -19,41 +19,68 @@ s.listen(2)
 print("Waiting for a connection, Server Started")
 
 
-players = [PlayerInterim(200,100,0,[],0,True,False,True,0,'player','Idle','0',False,400,100), PlayerInterim(200,100,0,[],0,True,False,True,0,'enemy','Idle','0',False,300,200)]
-bullet_interims = [[], []]
+
 
 def threaded_client(conn, player):
+    global currentPlayer
     conn.send(pickle.dumps(players[player]))
     reply = ""
-    while True:
-        try:
-            data = pickle.loads(conn.recv(2048))
-            players[player] = data[0]
-            bullet_interims[player] = data[1]
-
-            if not data:
-                print("Disconnected")
+    if currentPlayer>=1:
+        while True:
+            if currentPlayer <1:
+                print("other player disconnected, restarting game")
                 break
-            else:
-                if player == 1:
-                    reply = (players[0],bullet_interims[0])
+            try:
+                data = pickle.loads(conn.recv(2048))
+                players[player] = data[0]
+                bullet_interims[player] = data[1]
+                if currentPlayer <1:
+                    print("other player disconnected, restarting game")
+                    print("Disconnected")
+                    break
+                elif not data:
+                    print("Disconnected")
+                    break
                 else:
-                    reply = (players[1],bullet_interims[1])
+                    if player == 1:
+                        reply = (players[0],bullet_interims[0])
+                    else:
+                        reply = (players[1],bullet_interims[1])
 
-                print("Received: ", data)
-                print("Sending : ", reply)
-
-            conn.sendall(pickle.dumps(reply))
-        except:
-            break
+                    # print("Received: ", data)
+                    # print("Sending : ", reply)
+                conn.sendall(pickle.dumps(reply))
+                if currentPlayer <1:
+                    print("other player disconnected, restarting game")
+                    print("Disconnected")
+                    break
+            except:
+                break
 
     print("Lost connection")
     conn.close()
+    if currentPlayer == 1:
+        currentPlayer -= 1
+    elif currentPlayer == 2:
+        currentPlayer -= 2
 
+
+
+
+players = [PlayerInterim(200,100,0,[],0,True,False,True,0,'player','Idle','0',False,400,100), PlayerInterim(200,100,0,[],0,True,False,True,0,'enemy','Idle','0',False,300,200)]
+bullet_interims = [[], []]
 currentPlayer = 0
-while True:
-    conn, addr = s.accept()
-    print("Connected to:", addr)
+run = True
+while run:
+    if currentPlayer <= 1:
+        print(currentPlayer)
+        players = [PlayerInterim(200,100,0,[],0,True,False,True,0,'player','Idle','0',False,400,100), PlayerInterim(200,100,0,[],0,True,False,True,0,'enemy','Idle','0',False,300,200)]
+        conn, addr = s.accept()
+        print("Connected to:", addr)
 
-    start_new_thread(threaded_client, (conn, currentPlayer))
-    currentPlayer += 1
+        start_new_thread(threaded_client, (conn, currentPlayer))
+        currentPlayer += 1
+        print(currentPlayer)
+    else:
+        print("THERE ARE ALREADY 2 PLAYERS PLAYING")
+

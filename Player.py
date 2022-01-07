@@ -5,6 +5,7 @@ class Player(pygame.sprite.Sprite):
 
     def __init__(self,health,ammo,cooldown,bullet_interim_list:list,vertical_velocity,is_in_air,can_jump,is_alive,update_timer,player_type,players_action,action_number,flip,x,y):
         pygame.sprite.Sprite.__init__(self)
+        self.max_health = 200
         self.health = health
         self.ammo = ammo
         self.bullet_interim_list = bullet_interim_list
@@ -44,6 +45,20 @@ class Player(pygame.sprite.Sprite):
         self.rect.center=(x,y)
         self.cooldown = cooldown
 
+    def draw_health_bar(self,x,y):
+        font = pygame.font.SysFont('Futura',30)
+        text = font.render(self.player_type.upper() + "'S HEALTH:",True,(255,255,255))
+        pygame.display.get_surface().blit(text,(x - 200,y))
+        pygame.draw.rect(pygame.display.get_surface(), (255, 255, 255), (x -2,y-2,400+4,20+4))
+        pygame.draw.rect(pygame.display.get_surface(), (255, 0, 0), (x,y,400,20))
+        pygame.draw.rect(pygame.display.get_surface(), (0, 255, 0), (x,y,(400 * (self.health / self.max_health)),20))
+
+    def draw_ammo(self,x,y):
+        font = pygame.font.SysFont('Futura',30)
+        text = font.render(self.player_type.upper() + "'S AMMO: " + str(self.ammo),True,(255,255,255))
+        pygame.display.get_surface().blit(text,(x - 200,y))
+
+
     def is_alive_now(self):
         if self.health <= 0:
             self.is_alive = False
@@ -77,6 +92,8 @@ class Player(pygame.sprite.Sprite):
                 pygame.display.get_surface().blit(muzzle_img,muzzle_img_rect)
                 self.cooldown = 10
                 self.ammo -= 1
+                # if self.ammo % 5 == 0:
+                #     self.cooldown = 120
 
             elif self.cooldown <= 0 and self.flip == True and self.ammo > 0:
                 muzzle_img_rect.center = self.rect.midleft[0] -5 ,self.rect.midleft[1]
@@ -86,6 +103,8 @@ class Player(pygame.sprite.Sprite):
                 pygame.display.get_surface().blit(muzzle_img,muzzle_img_rect)
                 self.cooldown = 10
                 self.ammo -= 1
+                # if self.ammo % 5 == 0:
+                #     self.cooldown = 120
             # if self.flip == False:
             #     if x < self.rect.right and x < self.rect.left:
             #         self.flip = True
@@ -102,7 +121,7 @@ class Player(pygame.sprite.Sprite):
 
     def update_cooldown(self):
         if self.cooldown >0:
-            self.cooldown -= 1.2
+            self.cooldown -= 2
 
     def animate(self):
         ANIMATION_TIMER = 150
@@ -127,39 +146,54 @@ class Player(pygame.sprite.Sprite):
     def draw(self,surface):
         surface.blit(pygame.transform.flip(self.scaled_image,self.flip,False),(self.rect.x,self.rect.y))
 
-    def move(self,is_moving_right,is_moving_left):
+    def move(self,is_moving_right,is_moving_left,collidable_objects_list:list):
 #reset the dx and dy
         dx = 0
         dy = 0
         if is_moving_right:
-            dx += 3
+            dx += 10
             self.flip = False
 
         if is_moving_left:
-            dx -= 3
+            dx -= 10
             self.flip = True
 
 #control jumps
         if self.can_jump and not self.is_in_air:
-            self.vertical_velocity -= 28
+            self.vertical_velocity -= 15
             self.can_jump = False
             self.is_in_air = True
 #add gravity so player is still moving up but now moving up at a slower velocity
 # remember we add gravity and not subtract cuz bigger y in pygame means lower
 # height
-        self.vertical_velocity += 0.6
+        self.vertical_velocity += 1
 # but still we don't want the player to fall too fast so we'll cap it's falling
 # speed
-        if self.vertical_velocity >15:
-            self.vertical_velocity = 15
+        if self.vertical_velocity >10:
+            self.vertical_velocity = 10
 
         dy += self.vertical_velocity
 # now we check that the player stops falling once it hits the ground
 # but if he's close to the ground then it would fall just enough to land on the
 # ground and set the player to not be in the air
-        if self.rect.bottom + dy > 300: #screen height
-            self.is_in_air = False
-            dy = 300 - self.rect.bottom
+        #check for collison
+        for tile in collidable_objects_list:
+            #check for collison in x direction
+            if tile[1].colliderect(self.rect.x + dx,self.rect.y,self.scaled_image.get_width(),self.scaled_image.get_height()):
+                dx = 0
+            #check for collison in x direction
+            if tile[1].colliderect(self.rect.x,self.rect.y + dy,self.scaled_image.get_width(),self.scaled_image.get_height()):
+# check when going up or jumping
+                if self.vertical_velocity < 0:
+                    self.vertical_velocity = 0
+                    dy = tile[1].bottom - self.rect.top
+                    # self.is_in_air = False
+                    self.can_jump = False
+                elif self.vertical_velocity >= 0:
+                    self.vertical_velocity = 0
+                    dy = tile[1].top - self.rect.bottom
+                    self.is_in_air = False
+                    self.can_jump = False
 
 #update the x and y of the character
         self.rect.centerx += dx
