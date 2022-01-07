@@ -89,7 +89,7 @@ while game_is_running:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_a:
                 player_is_moving_left = True
-            if event.key == pygame.K_w and player1.is_alive:
+            if event.key == pygame.K_w and player1.is_alive and not player1.is_in_air:
                 player1.can_jump = True
             if event.key == pygame.K_d:
                 player_is_moving_right = True
@@ -137,12 +137,12 @@ while game_is_running:
         bullet = Bullet(player1,player2,bullet_group_player1,bullet_group_player2,player1.bullet_interim_list[0].x,player1.bullet_interim_list[0].y,player1.bullet_interim_list[0].targetx,player1.bullet_interim_list[0].targety,screen)
         bullet_group_player1.add(bullet)
     bullet_group_player1.draw(screen)
-    bullet_group_player1.update()
+    bullet_group_player1.update(collidable_objects)
     player1.draw(screen)
     player1.draw_health_bar(200,40)
     player1.draw_ammo(200,80)
     bullet_group_player2.draw(screen)
-    bullet_group_player2.update()
+    bullet_group_player2.update(collidable_objects)
     player2.draw(screen)
     player2.draw_health_bar(1515,40)
     player2.draw_ammo(1515,80)
