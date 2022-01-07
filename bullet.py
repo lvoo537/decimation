@@ -15,11 +15,11 @@ class Bullet(pygame.sprite.Sprite):
         self.targetx = targetx
         self.targety = targety
         self.angle = math.atan2(self.targety-y,self.targetx-x)
-        self.dx = math.cos(self.angle)*10
-        self.dy = math.sin(self.angle)*10
+        self.dx = math.cos(self.angle)*50
+        self.dy = math.sin(self.angle)*50
         self.screen = screen
 
-    def update(self):
+    def update(self, collidable_objects):
         #moving the bullet
         #we have to make this intermediate step unless there would be rounding
         #problems with bullet trajectory
@@ -29,8 +29,11 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.centery = int(self.y)
         #check if bullet has gone off the screen, note 1000,650 is screen width
         #and height respectively
-        if self.rect.right < 0 or self.rect.left > 800 or self.rect.bottom < 0 or self.rect.top > 650:
+        if self.rect.right < 0 or self.rect.left > 1920 or self.rect.bottom < 0 or self.rect.top > 1080:
             self.kill()
+        for tile in collidable_objects:
+            if tile[1].colliderect(self.rect):
+                self.kill()
 
         #checking collion of player1 and player 2 bullets group
         if pygame.sprite.spritecollide(self.player1,self.player2_bullets,False):
