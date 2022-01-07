@@ -15,8 +15,8 @@ class Bullet(pygame.sprite.Sprite):
         self.targetx = targetx
         self.targety = targety
         self.angle = math.atan2(self.targety-y,self.targetx-x)
-        self.dx = math.cos(self.angle)*50
-        self.dy = math.sin(self.angle)*50
+        self.dx = math.cos(self.angle)*70
+        self.dy = math.sin(self.angle)*70
         self.screen = screen
 
     def update(self, collidable_objects):

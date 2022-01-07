@@ -147,15 +147,18 @@ class Player(pygame.sprite.Sprite):
         surface.blit(pygame.transform.flip(self.scaled_image,self.flip,False),(self.rect.x,self.rect.y))
 
     def move(self,is_moving_right,is_moving_left,collidable_objects_list:list):
+        #check to see if player is in air
+        if self.vertical_velocity!= 0:
+            self.is_in_air = True
 #reset the dx and dy
         dx = 0
         dy = 0
         if is_moving_right:
-            dx += 10
+            dx += 15
             self.flip = False
 
         if is_moving_left:
-            dx -= 10
+            dx -= 15
             self.flip = True
 
 #control jumps
@@ -169,8 +172,8 @@ class Player(pygame.sprite.Sprite):
         self.vertical_velocity += 1
 # but still we don't want the player to fall too fast so we'll cap it's falling
 # speed
-        if self.vertical_velocity >10:
-            self.vertical_velocity = 10
+#         if self.vertical_velocity >10:
+#             self.vertical_velocity = 10
 
         dy += self.vertical_velocity
 # now we check that the player stops falling once it hits the ground
