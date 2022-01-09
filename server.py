@@ -4,8 +4,9 @@ from player_interim import PlayerInterim
 import pickle
 import  time
 
-local_ip = socket.gethostname()
-server = socket.gethostbyname(local_ip)
+# local_ip = socket.gethostname()
+# server = 'socket.gethostbyname(local_ip)'
+server = ''
 print(server)
 port = 5555
 
