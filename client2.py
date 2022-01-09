@@ -5,6 +5,7 @@ from Player import Player
 from network import Network
 from bullet import Bullet
 import csv
+import time
 import map_reader
 print(sys.version)
 #network stuff
@@ -78,6 +79,39 @@ for i, row in enumerate(map_data):
 crosshair = pygame.image.load('crosshair.png').convert_alpha()
 scaled_crosshair = pygame.transform.scale(crosshair,(30,30))
 crosshair_rect = scaled_crosshair.get_rect()
+
+#game over stuff
+game_over_type = 0
+def is_game_over(player1: Player,player2:Player):
+    global game_over_type
+    if (player1.players_action == 'Death' and player1.action_number == (len(player1.animation_types[player1.players_action]) -1)):
+        game_over_type = 2
+        return True
+    elif (player2.players_action == 'Death' and player2.action_number == (len(player2.animation_types[player2.players_action]) -1)):
+        game_over_type = 1
+        return True
+    elif player1.ammo == 0 and player2.ammo == 0:
+        game_over_type = 3
+        return True
+    else:
+        return False
+
+
+def game_over_screen():
+    current_time = time.time()
+    while time.time() - current_time <= 10:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT or(event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                run = False
+        game_over_image = pygame.image.load('game_over.png').convert_alpha()
+        scaled_game_over_image = pygame.transform.scale(game_over_image,(SCREEN_WIDTH,SCREEN_HEIGHT))
+        # scaled_game_over_image_rect= scaled_game_over_image.get_rect()
+        # scaled_game_over_image_rect.x = 0
+        # scaled_game_over_image_rect.y = 0
+        screen.blit(scaled_game_over_image,(0,0))
+        pygame.display.update()
+
+
 while game_is_running:
     clock.tick(FPS_of_game)
     screen.fill((100,100,200))
@@ -88,11 +122,6 @@ while game_is_running:
     # map_reader.draw(obstacle_list_of_tuples,screen)
     for element in obstacle_list_of_tuples:
         screen.blit(element[0],element[1])
-    # draw cross hair
-    pygame.mouse.set_visible(False)
-    mouse_position = pygame.mouse.get_pos()
-    crosshair_rect.center = mouse_position
-    screen.blit(scaled_crosshair,crosshair_rect)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT or(event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
@@ -164,7 +193,31 @@ while game_is_running:
     if len(player1.bullet_interim_list) >= 1:
         player1.bullet_interim_list.pop(0)
     # player2.move(player_is_moving_right,player_is_moving_left)
+    # draw cross hair
+    pygame.mouse.set_visible(False)
+    mouse_position = pygame.mouse.get_pos()
+    crosshair_rect.center = mouse_position
+    screen.blit(scaled_crosshair,crosshair_rect)
+    print(is_game_over(player1,player2))
+    if is_game_over(player1,player2):
+        font = pygame.font.SysFont('Futura',100)
+        if game_over_type !=3:
+            game_over_text = font.render('PLAYER '+ str(game_over_type) + ' WINS!!!!!!!!',True,(255,255,255))
+            screen.blit(game_over_text,(SCREEN_WIDTH/2-380,SCREEN_HEIGHT/2))
+        else:
+            game_over_text = font.render('IT IS A TIE!!!!!!',True,(255,255,255))
+            screen.blit(game_over_text,(SCREEN_WIDTH/2 - 380,SCREEN_HEIGHT/2 - 100))
+        print(game_over_type)
+        pygame.display.update()
+        time.sleep(3)
+        game_over_screen()
+        game_is_running = False
+
+
     pygame.display.update()
+
+
 pygame.quit()
+
 
 
