@@ -99,7 +99,8 @@ def is_game_over(player1: Player,player2:Player):
 
 def game_over_screen():
     current_time = time.time()
-    while time.time() - current_time <= 10:
+    run = True
+    while time.time() - current_time <= 10 and run:
         for event in pygame.event.get():
             if event.type == pygame.QUIT or(event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 run = False
@@ -201,12 +202,15 @@ while game_is_running:
     print(is_game_over(player1,player2))
     if is_game_over(player1,player2):
         font = pygame.font.SysFont('Futura',100)
-        if game_over_type !=3:
-            game_over_text = font.render('PLAYER '+ str(game_over_type) + ' WINS!!!!!!!!',True,(255,255,255))
-            screen.blit(game_over_text,(SCREEN_WIDTH/2-380,SCREEN_HEIGHT/2))
+        if game_over_type ==1:
+            game_over_text = font.render('YOU '+ ' WIN!!!!!!!!',True,(255,255,255))
+            screen.blit(game_over_text,(SCREEN_WIDTH/2-300,SCREEN_HEIGHT/2))
+        elif game_over_type ==2:
+            game_over_text = font.render('ENEMY '+ ' WINS :(',True,(255,255,255))
+            screen.blit(game_over_text,(SCREEN_WIDTH/2-300,SCREEN_HEIGHT/2))
         else:
             game_over_text = font.render('IT IS A TIE!!!!!!',True,(255,255,255))
-            screen.blit(game_over_text,(SCREEN_WIDTH/2 - 380,SCREEN_HEIGHT/2 - 100))
+            screen.blit(game_over_text,(SCREEN_WIDTH/2 - 300,SCREEN_HEIGHT/2 - 100))
         print(game_over_type)
         pygame.display.update()
         time.sleep(3)
