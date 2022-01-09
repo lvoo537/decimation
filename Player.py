@@ -45,17 +45,17 @@ class Player(pygame.sprite.Sprite):
         self.rect.center=(x,y)
         self.cooldown = cooldown
 
-    def draw_health_bar(self,x,y):
+    def draw_health_bar(self,player,x,y):
         font = pygame.font.SysFont('Futura',30)
-        text = font.render(self.player_type.upper() + "'S HEALTH:",True,(255,255,255))
+        text = font.render(player + "'S HEALTH:",True,(255,255,255))
         pygame.display.get_surface().blit(text,(x - 200,y))
         pygame.draw.rect(pygame.display.get_surface(), (255, 255, 255), (x -2,y-2,400+4,20+4))
         pygame.draw.rect(pygame.display.get_surface(), (255, 0, 0), (x,y,400,20))
         pygame.draw.rect(pygame.display.get_surface(), (0, 255, 0), (x,y,(400 * (self.health / self.max_health)),20))
 
-    def draw_ammo(self,x,y):
+    def draw_ammo(self,player,x,y):
         font = pygame.font.SysFont('Futura',30)
-        text = font.render(self.player_type.upper() + "'S AMMO: " + str(self.ammo),True,(255,255,255))
+        text = font.render(player + "'S AMMO: " + str(self.ammo),True,(255,255,255))
         pygame.display.get_surface().blit(text,(x - 200,y))
 
 

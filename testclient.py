@@ -10,16 +10,15 @@ print(sys.version)
 #network stuff
 network = Network()
 player1interim = network.getP()
-
 player1 = Player(player1interim.health,player1interim.ammo,player1interim.cooldown,player1interim.bullet_interim_list,player1interim.vertical_velocity,player1interim.is_in_air,player1interim.can_jump,player1interim.is_alive,player1interim.update_timer,player1interim.player_type,player1interim.players_action,player1interim.action_number,player1interim.flip,player1interim.x,player1interim.y)
 
 #pygame stuff
 pygame.init()
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 650
-# SCREEN_WIDTH = 1920
-# SCREEN_HEIGHT = 1080
+# SCREEN_WIDTH = 800
+# SCREEN_HEIGHT = 650
+SCREEN_WIDTH = 1920
+SCREEN_HEIGHT = 1080
 screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 pygame.display.set_caption("Decimation")
 game_is_running = True
@@ -151,13 +150,13 @@ while game_is_running:
     bullet_group_player1.draw(screen)
     bullet_group_player1.update(collidable_objects)
     player1.draw(screen)
-    player1.draw_health_bar(200,40)
-    player1.draw_ammo(200,80)
+    player1.draw_health_bar('PLAYER',200,40)
+    player1.draw_ammo('PLAYER',200,80)
     bullet_group_player2.draw(screen)
     bullet_group_player2.update(collidable_objects)
     player2.draw(screen)
-    player2.draw_health_bar(1515,40)
-    player2.draw_ammo(1515,80)
+    player2.draw_health_bar('ENEMY',1515,40)
+    player2.draw_ammo('ENEMY',1515,80)
     # debug(player1.health,100,10)
     # debug(player2.health,100,30)
     # debug(player1.ammo,200,10)
