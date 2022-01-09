@@ -199,7 +199,6 @@ while game_is_running:
     mouse_position = pygame.mouse.get_pos()
     crosshair_rect.center = mouse_position
     screen.blit(scaled_crosshair,crosshair_rect)
-    print(is_game_over(player1,player2))
     if is_game_over(player1,player2) and (not bullet_group_player1) and (not bullet_group_player2):
         font = pygame.font.SysFont('Futura',100)
         if game_over_type ==1:
@@ -211,7 +210,6 @@ while game_is_running:
         else:
             game_over_text = font.render('IT IS A TIE!!!!!!',True,(255,255,255))
             screen.blit(game_over_text,(SCREEN_WIDTH/2 - 300,SCREEN_HEIGHT/2 ))
-        print(game_over_type)
         pygame.display.update()
         time.sleep(3)
         game_over_screen()
