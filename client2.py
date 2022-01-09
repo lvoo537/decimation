@@ -15,10 +15,10 @@ player1 = Player(player1interim.health,player1interim.ammo,player1interim.cooldo
 #pygame stuff
 pygame.init()
 
-# SCREEN_WIDTH = 800
-# SCREEN_HEIGHT = 650
-SCREEN_WIDTH = 1920
-SCREEN_HEIGHT = 1080
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 650
+# SCREEN_WIDTH = 1920
+# SCREEN_HEIGHT = 1080
 screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 pygame.display.set_caption("Decimation")
 game_is_running = True
@@ -53,7 +53,7 @@ with open("icy_map2.csv", newline='') as csv_map:
 # load all images  into the image list
 map_tile_images = []
 for i in range(NUM_OF_TILES):
-    img = pygame.image.load('tiles/0 (' + str(i)+').png')
+    img = pygame.image.load('tiles/0 (' + str(i)+').png').convert_alpha()
     img = pygame.transform.scale(img, (TILE_SIZE, TILE_SIZE))
     map_tile_images.append(img)
 collidable_objects = []
@@ -73,15 +73,26 @@ for i, row in enumerate(map_data):
             if (col == 20) or (col>=23 and col <=25) or (col>=23 and col <=26)  or (col == 52) or (col == 68) or (col>=83 and col <=85) or (col>=129 and col <=131) or col ==133:
                 collidable_objects.append(tup)
 
-print(len(collidable_objects))
 
 
+crosshair = pygame.image.load('crosshair.png').convert_alpha()
+scaled_crosshair = pygame.transform.scale(crosshair,(30,30))
+crosshair_rect = scaled_crosshair.get_rect()
 while game_is_running:
     clock.tick(FPS_of_game)
     screen.fill((100,100,200))
+    # draw background
+    background = pygame.image.load('Background/single_background.png').convert_alpha()
+    scaled_background = pygame.transform.scale(background,(SCREEN_WIDTH,SCREEN_HEIGHT))
+    screen.blit(scaled_background,(0,0))
     # map_reader.draw(obstacle_list_of_tuples,screen)
     for element in obstacle_list_of_tuples:
         screen.blit(element[0],element[1])
+    # draw cross hair
+    pygame.mouse.set_visible(False)
+    mouse_position = pygame.mouse.get_pos()
+    crosshair_rect.center = mouse_position
+    screen.blit(scaled_crosshair,crosshair_rect)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT or(event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):

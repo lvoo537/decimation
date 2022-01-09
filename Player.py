@@ -154,26 +154,26 @@ class Player(pygame.sprite.Sprite):
         dx = 0
         dy = 0
         if is_moving_right:
-            dx += 15
+            dx += 8.5
             self.flip = False
 
         if is_moving_left:
-            dx -= 15
+            dx -= 8.5
             self.flip = True
 
 #control jumps
         if self.can_jump and not self.is_in_air:
-            self.vertical_velocity -= 15
+            self.vertical_velocity -= 25
             self.can_jump = False
             self.is_in_air = True
 #add gravity so player is still moving up but now moving up at a slower velocity
 # remember we add gravity and not subtract cuz bigger y in pygame means lower
 # height
-        self.vertical_velocity += 1
+        self.vertical_velocity += 2
 # but still we don't want the player to fall too fast so we'll cap it's falling
 # speed
-#         if self.vertical_velocity >10:
-#             self.vertical_velocity = 10
+        if self.vertical_velocity >15:
+            self.vertical_velocity = 15
 
         dy += self.vertical_velocity
 # now we check that the player stops falling once it hits the ground

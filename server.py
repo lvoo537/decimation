@@ -2,6 +2,7 @@ import socket
 from _thread import *
 from player_interim import PlayerInterim
 import pickle
+import  time
 
 local_ip = socket.gethostname()
 server = socket.gethostbyname(local_ip)
@@ -15,7 +16,7 @@ try:
 except socket.error as e:
     str(e)
 
-s.listen(2)
+s.listen()
 print("Waiting for a connection, Server Started")
 
 
@@ -23,7 +24,10 @@ print("Waiting for a connection, Server Started")
 
 def threaded_client(conn, player):
     global currentPlayer
-    conn.send(pickle.dumps(players[player]))
+    try:
+        conn.send(pickle.dumps(players[player]))
+    except :
+        pass
     reply = ""
     if currentPlayer>=1:
         while True:
@@ -67,14 +71,24 @@ def threaded_client(conn, player):
 
 
 
-players = [PlayerInterim(200,100,0,[],0,True,False,True,0,'player','Idle','0',False,400,100), PlayerInterim(200,100,0,[],0,True,False,True,0,'enemy','Idle','0',False,300,200)]
+players = [PlayerInterim(200,100,0,[],0,True,False,True,0,'player','Idle','0',False,100,100), PlayerInterim(200,100,0,[],0,True,False,True,0,'enemy','Idle','0',False,1850,100)]
 bullet_interims = [[], []]
 currentPlayer = 0
 run = True
 while run:
     if currentPlayer <= 1:
+        # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        #
+        # try:
+        #     s.bind((server, port))
+        # except socket.error as e:
+        #     str(e)
+        #
+        # s.listen()
+        # print("Waiting for a connection, Server Started")
+        # print(s)
         print(currentPlayer)
-        players = [PlayerInterim(200,100,0,[],0,True,False,True,0,'player','Idle','0',False,400,100), PlayerInterim(200,100,0,[],0,True,False,True,0,'enemy','Idle','0',False,300,200)]
+        players = [PlayerInterim(200,100,0,[],0,True,False,True,0,'player','Idle','0',False,100,100), PlayerInterim(200,100,0,[],0,True,False,True,0,'enemy','Idle','0',False,1850,100)]
         conn, addr = s.accept()
         print("Connected to:", addr)
 
@@ -82,5 +96,10 @@ while run:
         currentPlayer += 1
         print(currentPlayer)
     else:
-        print("THERE ARE ALREADY 2 PLAYERS PLAYING")
+        # print("THERE ARE ALREADY 2 PLAYERS PLAYING")
+        run = False
+        while run == False:
+            if currentPlayer <=1:
+                time.sleep(5)
+                run = True
 
