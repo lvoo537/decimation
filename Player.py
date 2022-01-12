@@ -3,8 +3,9 @@ import math
 from bullet_interim import BulletInterim
 class Player(pygame.sprite.Sprite):
 
-    def __init__(self,health,ammo,cooldown,bullet_interim_list:list,vertical_velocity,is_in_air,can_jump,is_alive,update_timer,player_type,players_action,action_number,flip,x,y):
+    def __init__(self,screen,health,ammo,cooldown,bullet_interim_list:list,vertical_velocity,is_in_air,can_jump,is_alive,update_timer,player_type,players_action,action_number,flip,x,y):
         pygame.sprite.Sprite.__init__(self)
+        self.screen = screen
         self.max_health = 200
         self.health = health
         self.ammo = ammo
@@ -22,22 +23,22 @@ class Player(pygame.sprite.Sprite):
         temp_animationList = []
         for i in range(5):
             temp_image1 = pygame.image.load('img/' + player_type+'/' + 'Idle/' + str(i)+'.png')
-            temp_image2 = pygame.transform.scale(temp_image1,((int(temp_image1.get_width()*2)),(int(temp_image1.get_width()*2))))
+            temp_image2 = pygame.transform.scale(temp_image1,((int(temp_image1.get_width()*2*(self.screen.get_width()/1920))),(int(temp_image1.get_width()*2*(self.screen.get_height()/1080)))))
             temp_animationList.append(temp_image2)
         self.animation_types['Idle'] = temp_animationList
         temp_animationList = []
         for i in range(6):
             temp_image1 = pygame.image.load('img/' + player_type+'/' + 'Run/' + str(i)+'.png')
-            temp_image2 = pygame.transform.scale(temp_image1,((int(temp_image1.get_width()*2)),(int(temp_image1.get_width()*2))))
+            temp_image2 = pygame.transform.scale(temp_image1,((int(temp_image1.get_width()*2*(self.screen.get_width()/1920))),(int(temp_image1.get_width()*2*(self.screen.get_height()/1080)))))
             temp_animationList.append(temp_image2)
         self.animation_types['Run'] = temp_animationList
         temp_image1 = pygame.image.load('img/' + player_type+'/' + 'Jump/' +'0.png')
-        temp_image2 = pygame.transform.scale(temp_image1,((int(temp_image1.get_width()*2)),(int(temp_image1.get_width()*2))))
+        temp_image2 = pygame.transform.scale(temp_image1,((int(temp_image1.get_width()*2*(self.screen.get_width()/1920))),(int(temp_image1.get_width()*2*(self.screen.get_height()/1080)))))
         self.animation_types['Jump'] = [temp_image2]
         temp_animationList = []
         for i in range(8):
             temp_image1 = pygame.image.load('img/' + player_type+'/' + 'Death/' + str(i)+'.png')
-            temp_image2 = pygame.transform.scale(temp_image1,((int(temp_image1.get_width()*2)),(int(temp_image1.get_width()*2))))
+            temp_image2 = pygame.transform.scale(temp_image1,((int(temp_image1.get_width()*2*(self.screen.get_width()/1920))),(int(temp_image1.get_width()*2*(self.screen.get_height()/1080)))))
             temp_animationList.append(temp_image2)
         self.animation_types['Death'] = temp_animationList
         self.scaled_image = self.animation_types[players_action][int(action_number)]
@@ -46,17 +47,17 @@ class Player(pygame.sprite.Sprite):
         self.cooldown = cooldown
 
     def draw_health_bar(self,player,x,y):
-        font = pygame.font.SysFont('Futura',30)
+        font = pygame.font.Font('introrustg-base2line.otf', int(25*(self.screen.get_width()/1920)))
         text = font.render(player + "'S HEALTH:",True,(255,255,255))
-        pygame.display.get_surface().blit(text,(x - 200,y))
-        pygame.draw.rect(pygame.display.get_surface(), (255, 255, 255), (x -2,y-2,400+4,20+4))
-        pygame.draw.rect(pygame.display.get_surface(), (255, 0, 0), (x,y,400,20))
-        pygame.draw.rect(pygame.display.get_surface(), (0, 255, 0), (x,y,(400 * (self.health / self.max_health)),20))
+        pygame.display.get_surface().blit(text,(int((x - 220) * (self.screen.get_width()/1920)),int((y-5) * (self.screen.get_height()/1080))))
+        pygame.draw.rect(pygame.display.get_surface(), (255, 255, 255), (int((x +8) * (self.screen.get_width()/1920)),int((y+2) * (self.screen.get_height()/1080)),int((400+4)*(self.screen.get_width()/1920)),int((17+4)*(self.screen.get_height()/1080))))
+        pygame.draw.rect(pygame.display.get_surface(), (255, 0, 0), (int((x +10) * (self.screen.get_width()/1920)),int((y+4) * (self.screen.get_height()/1080)),int((400)*(self.screen.get_width()/1920)),int((17)*(self.screen.get_height()/1080))))
+        pygame.draw.rect(pygame.display.get_surface(), (0, 255, 0), (int((x +10) * (self.screen.get_width()/1920)),int((y+4) * (self.screen.get_height()/1080)),int((400 * (self.health / self.max_health))*(self.screen.get_width()/1920)),int((17)*(self.screen.get_height()/1080))))
 
     def draw_ammo(self,player,x,y):
-        font = pygame.font.SysFont('Futura',30)
+        font = pygame.font.Font('introrustg-base2line.otf', int(25 * (self.screen.get_width()/1920)))
         text = font.render(player + "'S AMMO: " + str(self.ammo),True,(255,255,255))
-        pygame.display.get_surface().blit(text,(x - 200,y))
+        pygame.display.get_surface().blit(text,(int((x - 220) * (self.screen.get_width()/1920)),int(y * (self.screen.get_height()/1080))))
 
 
     def is_alive_now(self):
@@ -199,5 +200,5 @@ class Player(pygame.sprite.Sprite):
                     self.can_jump = False
 
 #update the x and y of the character
-        self.rect.centerx += dx
-        self.rect.centery += dy
+        self.rect.centerx += (dx *(self.screen.get_width()/1920))
+        self.rect.centery += (dy*(self.screen.get_height()/1080))

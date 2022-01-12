@@ -1,6 +1,7 @@
 import socket
 import pickle
 import sys
+import time
 
 class Network:
     def __init__(self):
@@ -16,11 +17,14 @@ class Network:
     def connect(self):
         try:
             self.client.connect(self.addr)
+            # time.sleep(10)
             p = pickle.loads(self.client.recv(2048))
-            if p == None:
-                sys.exit()
+            # while p == None:
+            #     p = pickle.loads(self.client.recv(2048))
+            print(p)
             return p
-        except:
+        except Exception as e:
+            print(e)
             print("yikes")
 
     def send(self, data):
